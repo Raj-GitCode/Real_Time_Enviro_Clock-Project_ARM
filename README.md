@@ -1,5 +1,5 @@
 
-# **📟 LPC2148 Real-Time Clock**
+# **📟 LPC2148 Real-Time Enviro Clock**
 
 A complete embedded application for **LPC2148 ARM7 microcontroller**, featuring:
 
