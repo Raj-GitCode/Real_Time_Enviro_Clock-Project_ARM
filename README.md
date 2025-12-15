@@ -39,6 +39,37 @@ The user can set:
 * **Alarm (HH:MM:SS)**
 
 ---
+## **📂 Folder Structure**
+
+```
+/Project
+│── main.c
+│── main_helpers.c
+│── delay.c
+│── lcd.c
+│── rtc.c
+│── adc.c
+│── kpm.c
+│── bell.c
+│── setAlarm.c
+│── setDateTime.c
+│
+├── headers/
+│   ├── types.h
+│   ├── delay.h
+│   ├── lcd.h
+│   ├── lcd_defines.h
+│   ├── rtc.h
+│   ├── rtc_defines.h
+│   ├── adc.h
+│   ├── adc_defines.h
+│   ├── kpm.h
+│   ├── kpm_defines.h
+│   ├── bell.h
+│   ├── defines.h
+│
+└── README.md   (this file)
+```
 
 ## **🔧 Hardware Requirements**
 
@@ -110,38 +141,6 @@ Press external button → Menu appears:
 | on/c| Save and exit        |
 
 ---
-
-## **📂 Folder Structure**
-
-```
-/Project
-│── main.c
-│── main_helpers.c
-│── delay.c
-│── lcd.c
-│── rtc.c
-│── adc.c
-│── kpm.c
-│── bell.c
-│── setAlarm.c
-│── setDateTime.c
-│
-├── headers/
-│   ├── types.h
-│   ├── delay.h
-│   ├── lcd.h
-│   ├── lcd_defines.h
-│   ├── rtc.h
-│   ├── rtc_defines.h
-│   ├── adc.h
-│   ├── adc_defines.h
-│   ├── kpm.h
-│   ├── kpm_defines.h
-│   ├── bell.h
-│   ├── defines.h
-│
-└── README.md   (this file)
-```
 
 ---
 
