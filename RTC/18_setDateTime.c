@@ -11,18 +11,18 @@
 #define MAX_FIELDS 7   // 6 old + 1 new (D)
 
 typedef struct {
-    u8 start_pos;       // absolute LCD position (0–31)
-    u8 length;          // number of digits
-    u16 max_value;      // maximum allowed value
-    u8 digits[4];       // digit buffer
-    u8 filled[4];       // filled flags
+    u8 start_pos;       
+    u8 length;         
+    u16 max_value;     
+    u8 digits[4];       
+    u8 filled[4];       
 } Field;
 
 u8 cursor_poss = 0;
 u8 total_fieldss = 0;
 Field fieldss[MAX_FIELDS];
 
-// ---- Function Declarations ----
+
 void Display_Templates(void);
 void Handle_D_Fields(u8 key);
 void MoveCursorVerticallys(u8 key);
@@ -38,10 +38,9 @@ u8 IsEditablePoss(u8 pos);
 
 
 
-// ---- LCD Setup ----
 void Display_Templates(void)
 {
-    CmdLCD(0x01); // Clear display
+    CmdLCD(0x01); 
     StrLCD((s8 *)"DATE: DD:MM:YYYY");
     CmdLCD(GOTO_LINE2_POS0);
     StrLCD((s8 *)"TIME: HH:MM:SS D");
@@ -50,7 +49,6 @@ void Display_Templates(void)
     cursor_poss = 0;
 }
 
-// ---- Add Field ----
 void AddFields(u8 start, u8 len, u16 max)
 {
     Field *f;
@@ -67,7 +65,6 @@ void AddFields(u8 start, u8 len, u16 max)
     }
 }
 
-// ---- Cursor Position ----
 void SetCursorPoss(u8 pos)
 {
     if (pos < 16)
@@ -78,7 +75,7 @@ void SetCursorPoss(u8 pos)
     cursor_poss = pos;
 }
 
-// ---- Get Field Based on Cursor ----
+
 Field* GetCurrentFields(void)
 {
     u8 i;
@@ -90,7 +87,6 @@ Field* GetCurrentFields(void)
     return NULL;
 }
 
-// ---- Move Cursor Back ----
 void MoveCursorBack(void)
 {
     if (cursor_poss == 6)
@@ -106,7 +102,6 @@ void MoveCursorBack(void)
     }
 }
 
-// ---- Move Cursor ----
 void MoveCursors(u8 key)
 {
     Field *f;
@@ -141,7 +136,7 @@ void MoveCursors(u8 key)
         CmdLCD(GOTO_LINE2_POS0 + (cursor_poss - 16));
 }
 
-// ---- Auto-fill Field ----
+
 void AutoFillFields(Field *f)
 {
     u8 i;
@@ -157,7 +152,6 @@ void AutoFillFields(Field *f)
     SetCursorPoss(f->start_pos + f->length);
 }
 
-// ---- Validate Field ----
 void CheckAndFixFields(Field *f)
 {
     u8 i;
@@ -179,7 +173,7 @@ void CheckAndFixFields(Field *f)
     }
 }
 
-// ---- Check if Cursor in Editable Area ----
+
 u8 IsEditablePoss(u8 pos)
 {
     u8 i;
@@ -191,7 +185,7 @@ u8 IsEditablePoss(u8 pos)
     return 0;
 }
 
-// ---- Enter Digit ----
+
 void EnterDigit(u8 key)
 {
     Field *f;
@@ -249,7 +243,7 @@ void Handle_D_Fields(u8 key)
         if (D_value > 6)
             D_value = 0;
 
-        // Update the field buffer so later extraction works
+
         f->digits[0] = D_value + '0';
         f->filled[0] = 1;
 
@@ -260,7 +254,7 @@ void Handle_D_Fields(u8 key)
     }
 }
 
-// ---- Move Cursor Vertically ----
+
 void MoveCursorVertically(u8 key)
 {
     if (key == '-') {
@@ -288,7 +282,7 @@ void Set_DateAlarm(void)
 
     Display_Templates();
 
-    // ---- Add Fields ----
+
     AddFields(6, 2, 31);     // DD
     AddFields(9, 2, 12);     // MM
     AddFields(12, 4, 4050);  // YYYY
@@ -312,7 +306,7 @@ void Set_DateAlarm(void)
                 EnterDigit(key);
            else if (key == 'b' || key == 'B') {
 
-									// ---- Extract entered values ----
+								
 									dd    = (fieldss[0].digits[0] - '0') * 10 + (fieldss[0].digits[1] - '0');
 									mm    = (fieldss[1].digits[0] - '0') * 10 + (fieldss[1].digits[1] - '0');
 									yyyy  = (fieldss[2].digits[0] - '0') * 1000 +
@@ -324,18 +318,18 @@ void Set_DateAlarm(void)
 									ss    = (fieldss[5].digits[0] - '0') * 10 + (fieldss[5].digits[1] - '0');
 									day   = (fieldss[6].digits[0] - '0');
 
-									// ---- Update the RTC ----
+								
 									SetRTCTimeInfo(hh, min, ss);
 									SetRTCDateInfo(dd, mm, yyyy);
 									SetRTCDay(day);
 
-									// ---- Confirm on LCD ----
+								
 									CmdLCD(0x01);
 									CmdLCD(CLEAR_LCD);
 									StrLCD((s8 *)"Saved DateTime:");
 									CmdLCD(GOTO_LINE2_POS0);
 
-									// Print DD:MM:YYYY HH:MM:SS D
+									
 									for (i = 0; i < total_fieldss; i++) {
 											for (j = 0; j < fieldss[i].length; j++)
 													CharLCD(fieldss[i].digits[j]);
