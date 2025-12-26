@@ -13,25 +13,25 @@
 
 void Set_DateAlarm(void);
 void Set_Alarm(void);
-// Extern globals from main.c
+
 extern s32 hour, min, sec, date, month, year, day;
 extern s32 alarm_hour, alarm_min, alarm_sec;
 extern unsigned char menu_active;
 extern char key;
 static unsigned char first_run = 1;
-// External ISR from main.c
+
 extern void EINT0_ISR(void);
 
 void Check_Alarm(void)
 {
     static unsigned char alarm_triggered = 0;
     unsigned char key;
-    unsigned int seconds_counter = 0;   // counts how long alarm has been active
+    unsigned int seconds_counter = 0;   
 
     if (alarm_hour == -1)
-        return;  // No alarm set
+        return; 
 
-    // --- Trigger alarm if current time matches set alarm ---
+
     if (hour == alarm_hour && min == alarm_min && sec == alarm_sec && alarm_triggered == 0)
     {
         alarm_triggered = 1;
@@ -39,18 +39,16 @@ void Check_Alarm(void)
         CmdLCD(CLEAR_LCD);
         Show_Bell_On_LCD();
 
-        IOSET0 = (1 << 0);   // Turn ON LED / buzzer
-
-        // --- Alarm active loop ---
+        IOSET0 = (1 << 0);  
         seconds_counter = 0;
         while (1)
         {
             key = KeyScan();
 
-            // --- Option 1: user presses 'B' key to stop alarm ---
+          
             if (key == 'b')
             {
-                IOCLR0 = (1 << 0);      // Turn OFF LED
+                IOCLR0 = (1 << 0);      
                 CmdLCD(CLEAR_LCD);
                 StrLCD("Alarm Stopped");
                 delay_ms(500);
@@ -58,13 +56,13 @@ void Check_Alarm(void)
                 break;
             }
 
-            // --- Option 2: auto-stop after 60 seconds ---
-            delay_ms(100);  // delay of 1 second (use your existing function)
+           
+            delay_ms(100); 
             seconds_counter++;
 
-            if (seconds_counter >= 50) // // 600 × 100 ms = 60 s
+            if (seconds_counter >= 50) 
             {
-                IOCLR0 = (1 << 0);      // Turn OFF LED
+                IOCLR0 = (1 << 0);      
                 CmdLCD(CLEAR_LCD);
                 StrLCD("Auto Stop Alarm");
                 delay_ms(500);
@@ -74,14 +72,13 @@ void Check_Alarm(void)
         }
     }
 
-    // --- Reset trigger after that second passes ---
+
     if (sec != alarm_sec)
         alarm_triggered = 0;
 }
 
 void EINT0_Init(void)
 {
-    // Configure P0.1 as EINT0
     PINSEL0 &= ~(3 << 2);
     PINSEL0 |=  (3 << 2);   // P0.1 = EINT0
 
@@ -89,7 +86,6 @@ void EINT0_Init(void)
     EXTPOLAR = 0x00;        // Falling edge
     EXTINT   = 0x01;        // Clear flag
 
-    // VIC setup
     VICIntSelect = 0x00000000;
     VICVectAddr0 = (unsigned long)EINT0_ISR;
     VICVectCntl0 = 0x20 | 14;
@@ -119,7 +115,7 @@ void Show_RTC_Display(void)
 {
     extern unsigned char first_run;
     static int last_min = -1;
-    extern s8 week[][4];   // ? move this here
+    extern s8 week[][4];   
 
     GetRTCTimeInfo(&hour, &min, &sec);
     GetRTCDateInfo(&date, &month, &year);
@@ -132,15 +128,15 @@ void Show_RTC_Display(void)
         last_min = min;
     }
 
-    // ---------- LINE 1 ----------
+
     CmdLCD(GOTO_LINE1_POS0);
     DisplayRTCTime(hour, min, sec);
     Show_ADC_Temperature();
 
-    // ---------- LINE 2 ----------
+
     CmdLCD(GOTO_LINE2_POS0);
 
-    // Write date + day in one shot
+
     CharLCD((date / 10) + '0');
     CharLCD((date % 10) + '0');
     CharLCD('-');
@@ -149,7 +145,7 @@ void Show_RTC_Display(void)
     CharLCD('-');
     U32LCD(year);
     StrLCD("   ");
-    StrLCD(week[day]);   // ? prints day name
+    StrLCD(week[day]);  
 
     CmdLCD(0x0C);
     delay_ms(50);
@@ -163,7 +159,7 @@ void Show_KeyHelp(void)
     StrLCD((s8 *)" #Bck D:Fw B:Up");
     CmdLCD(GOTO_LINE2_POS0+3);
     StrLCD((s8 *)"C:Dn *:Menu");
-    delay_s(1);   // Show for 5 seconds
+    delay_s(1);   
     CmdLCD(CLEAR_LCD);
 }
 void Show_A_KeyHelp(void)
@@ -175,7 +171,7 @@ void Show_A_KeyHelp(void)
     StrLCD((s8 *)"   #Bck D:Fw");
     CmdLCD(GOTO_LINE2_POS0+4);
     StrLCD((s8 *)"*:Menu");
-    delay_s(1);   // Show for 5 seconds
+    delay_s(1);   
     CmdLCD(CLEAR_LCD);
 }
 
@@ -193,7 +189,7 @@ void Show_Edit_Menu(void)
         switch (key)
         {
             case '1':
-								Show_KeyHelp();
+				Show_KeyHelp();
                 Set_DateAlarm();
                 CmdLCD(CLEAR_LCD);
                 StrLCD("  ****EDIT****");
@@ -202,8 +198,8 @@ void Show_Edit_Menu(void)
                 break;
 
             case '2':
-								//Show_KeyHelp();
-								Show_A_KeyHelp();
+								
+				Show_A_KeyHelp();
                 Set_Alarm();
                 CmdLCD(CLEAR_LCD);
                 StrLCD("  ****EDIT****");
