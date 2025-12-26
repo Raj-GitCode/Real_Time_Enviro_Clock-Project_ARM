@@ -32,7 +32,7 @@ void AutoFillField(Field *f);
 void CheckAndFixField(Field *f);
 u8 IsEditablePos(u8 pos);
 
-// ---- LCD Setup ----
+
 void Display_AlarmTemplate(void)
 {
     CmdLCD(0x01);
@@ -44,7 +44,7 @@ void Display_AlarmTemplate(void)
    // cursor_pos = 3;      
 }
 
-// ---- Add Field ----
+
 void AddField(u8 start, u8 len, u16 max)
 {
     Field *f;
@@ -60,7 +60,7 @@ void AddField(u8 start, u8 len, u16 max)
         f->filled[i] = 0;
     }
 }
-// ---- Set Cursor ----
+
 void SetCursorPos(u8 pos)
 {
     if (pos < 16)
@@ -71,7 +71,6 @@ void SetCursorPos(u8 pos)
     cursor_pos = pos;
 }
 
-// ---- Get Current Field ----
 Field* GetCurrentField(void)
 {
     u8 i;
@@ -83,15 +82,15 @@ Field* GetCurrentField(void)
     return NULL;
 }
 
-// ---- Move Cursor Back ----
+
 void MoveCursBack(void)
 {
-    if (cursor_pos == 19) return;  // first editable pos
+    if (cursor_pos == 19) return;  
     cursor_pos--;
-    if (cursor_pos == 21 || cursor_pos == 24) cursor_pos--; // skip colons
+    if (cursor_pos == 21 || cursor_pos == 24) cursor_pos--; 
 }
 
-// ---- Move Cursor ----
+
 void MoveCurs(u8 key)
 {
     Field *f;
@@ -116,7 +115,7 @@ void MoveCurs(u8 key)
         CmdLCD(GOTO_LINE2_POS0 + (cursor_pos - 16));
 }
 
-// ---- Auto-fill ----
+
 void AutoFillField(Field *f)
 {
     u8 i;
@@ -132,7 +131,6 @@ void AutoFillField(Field *f)
     SetCursorPos(f->start_pos + f->length);
 }
 
-// ---- Validation ----
 void CheckAndFixField(Field *f)
 {
     u8 i;
@@ -154,7 +152,7 @@ void CheckAndFixField(Field *f)
     }
 }
 
-// ---- Editable area check ----
+
 u8 IsEditablePos(u8 pos)
 {
     u8 i;
@@ -166,7 +164,7 @@ u8 IsEditablePos(u8 pos)
     return 0;
 }
 
-// ---- Enter Digit ----
+
 void EnterDig(u8 key)
 {
     Field *f;
@@ -194,7 +192,7 @@ void Set_Alarm(void)
     u8 key;
     u8 i, j;
 
-    // ---- Reset global field structures ----
+  
     total_fields = 0;
     cursor_pos = 0;          
 
@@ -212,7 +210,7 @@ void Set_Alarm(void)
     Init_KPM();
     Display_AlarmTemplate();
 
-    // Add fields
+
     AddField(19, 2, 23);   // HH
     AddField(22, 2, 59);   // MM
     AddField(25, 2, 59);   // SS
@@ -227,20 +225,20 @@ void Set_Alarm(void)
             else if (key >= '0' && key <= '9')
                 EnterDig(key);
             else if (key == 'b' || key == 'B') {
-                // ---- Display saved alarm time ----
-                CmdLCD(0x01);  // Clear LCD
-								CmdLCD(CLEAR_LCD);
+             
+                CmdLCD(0x01); 
+				CmdLCD(CLEAR_LCD);
                 StrLCD((s8 *)"Saved Alarm:");
                 CmdLCD(GOTO_LINE2_POS0);
                 
-                // Print HH:MM:SS
+         
                 for (i = 0; i < total_fields; i++) {
                     for (j = 0; j < fields[i].length; j++)
                         CharLCD(fields[i].digits[j]);
                     if (i < total_fields - 1) CharLCD(':');
                 }
 
-																// Save the alarm time into global variables
+															
 								alarm_hour = (fields[0].digits[0] - '0') * 10 + (fields[0].digits[1] - '0');
 								alarm_min  = (fields[1].digits[0] - '0') * 10 + (fields[1].digits[1] - '0');
 								alarm_sec  = (fields[2].digits[0] - '0') * 10 + (fields[2].digits[1] - '0');
