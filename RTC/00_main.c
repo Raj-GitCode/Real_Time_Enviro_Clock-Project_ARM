@@ -20,7 +20,7 @@ char key;
 // Alarm globals
 s32 alarm_hour = -1, alarm_min = -1, alarm_sec = -1;
 
-// Function prototypes (defined in main_helpers.c)
+
 void EINT0_Init(void);
 void Check_Alarm(void);
 void Show_RTC_Display(void);
@@ -30,9 +30,9 @@ void Show_Edit_Menu(void);
 // External interrupt ISR
 void EINT0_ISR(void) __irq
 {
-    eint_flag = 1;           // Set flag to show menu
-    EXTINT = 0x01;           // Clear EINT0 flag
-    VICVectAddr = 0x00;      // Acknowledge end of interrupt
+    eint_flag = 1;          
+    EXTINT = 0x01;          
+    VICVectAddr = 0x00;      
 }
 
 #include "bell.h"
@@ -43,21 +43,19 @@ int main(void)
     RTC_Init();
     Init_KPM();
     Init_ADC();
-		//Create_Bell_Symbol();   // Create alarm bell character
+		
 
-    IODIR0 |= (1 << 0);  // Set P0.0 as output (LED)
-    IOCLR0 = (1 << 0);   // Turn LED OFF initially
-
+    IODIR0 |= (1 << 0);  
+    IOCLR0 = (1 << 0);   
     Show_ADC_Temperature();
 
-    // Set initial date/time
     SetRTCTimeInfo(19, 30, 0);
     SetRTCDateInfo(18, 10, 2025);
     SetRTCDay(6); // Saturday
 
-    // Initialize EINT0
+
     EINT0_Init();
-    CmdLCD(0x0C);   // Display ON, cursor OFF, blink OFF
+    CmdLCD(0x0C);  
 
     while (1)
     {
@@ -70,9 +68,9 @@ int main(void)
 
         if (!menu_active)
         {
-            Show_RTC_Display();     // Show RTC only if menu not active
+            Show_RTC_Display();     
             Show_ADC_Temperature();
-            Check_Alarm();          // LED control happens here
+            Check_Alarm();          
         }
     }
 }
